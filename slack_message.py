@@ -11,4 +11,4 @@ def slack_message( message ):
     print response.text
     return response
 
-# send_slack_message("Test message")
+# slack_message("Test message")
