@@ -10,7 +10,8 @@ class IdleMode:
     def __init__(self, master):
         self.master = master
         self.frame = Frame(self.master)
-
+        self.prompt = StringVar()
+        
         self.btn_1 = Button(
             self.frame,
             text="1",
@@ -40,12 +41,13 @@ class IdleMode:
         
         self.done_btn = Button(
             self.frame,
-            text="DONE",
+            text="CANCEL",
             bg="red",
             fg="white",
             activeforeground="white",
             activebackground="red",
-            height=13,
+            command=self.clear_game,
+            height=20,
             width=16,
             font=(None, 10))
         
@@ -57,7 +59,7 @@ class IdleMode:
             fg="white",
             activeforeground="white",
             activebackground="green",
-            height=13,
+            height=20,
             width=16,
             font=(None, 10),
             command=self.go_to_game)
@@ -72,42 +74,51 @@ class IdleMode:
                                bg="blue",
                                fg="white",
                                text="Players needed",
-                               height=3,
+                               height=5,
                                width=50,
                                font=(None, 20))
-
+        
         self.bottom_label = Label(self.master,
                                   height=2,
                                   width=50,
-                                  text = "test",
+                                  textvariable=self.prompt,
                                   font=(None, 10))
 
         self.top_label.pack()
-        self.frame.pack()
         self.bottom_label.pack()
+        self.frame.pack()
+        
 
     def go_to_game(self):
+        self.prompt.set("")
+        slack.send_message("An epic foosball game has begun!")
         self.new_window = Toplevel(self.master)
         self.new_window.attributes("-fullscreen", True)
         self.app = GameMode(self.new_window)
 
     def need_1_player(self):
+        self.prompt.set("Last Request: 1 player")
         slack.send_message("Need 1 player")
         
     def need_2_players(self):
+        self.prompt.set("Last Request: 2 players")
         slack.send_message("Need 2 players")
         
     def need_3_players(self):
+        self.prompt.set("Last Request: 3 players")
         slack.send_message("Need 3 players")
         
-        
-        
+    def clear_game(self):
+        self.prompt.set("")
+        slack.send_message("Nobody's coming? Alright, cancelling game request :crying_cat_face:")
+
+
 class GameMode:
 
     def __init__(self, master):
         self.master = master
         self.frame = Frame(self.master)
-        self.quit_btn = Button(self.frame, text="QUIT", height=20, width=20, command=self.confirm_quit)
+        self.quit_btn = Button(self.frame, text="DONE", height=20, width=20, command=self.confirm_quit)
     
         self.label = Label(self.master,
                            bg="red",
@@ -128,6 +139,7 @@ class GameMode:
         result = tkMessageBox.askyesno("Confirmation", "Do you want to end your game?", icon='warning', parent=self.master)
         if result:
             self.back_to_idle()
+            slack.send_message("Game finished!")
 
             
 def main():
