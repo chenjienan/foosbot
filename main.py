@@ -91,26 +91,26 @@ class IdleMode:
 
     def go_to_game(self):
         self.prompt.set("")
-        slack_api.send_message("An epic foosball game has begun!")
+        slack_api.send_message(":soccer:  *An epic foosball game has begun!*")
         self.new_window = Toplevel(self.master)
         self.new_window.attributes("-fullscreen", True)
         self.app = GameMode(self.new_window)
 
     def need_1_player(self):
         self.prompt.set("Last Request: 1 player")
-        slack_api.send_message("Need 1 player")
+        slack_api.send_message("1", "players_needed")
 
     def need_2_players(self):
         self.prompt.set("Last Request: 2 players")
-        slack_api.send_message("Need 2 players")
+        slack_api.send_message("2", "players_needed")
 
     def need_3_players(self):
         self.prompt.set("Last Request: 3 players")
-        slack_api.send_message("Need 3 players")
+        slack_api.send_message("g ", "players_needed")
 
     def clear_game(self):
         self.prompt.set("")
-        slack_api.send_message("Nobody's coming? Alright, cancelling game request :crying_cat_face:")
+        slack_api.send_message(":soccer: Nobody's coming? Alright, cancelling game request :crying_cat_face:")
 
 
 class GameMode:
@@ -131,13 +131,12 @@ class GameMode:
                                 text="Team 1",
                                 width=50, height=2)
 
-        
+
         self.team1Frame.grid(row=1, column=0)
-        
+
         self.team2Frame = Frame(self.frame, borderwidth=5, relief="sunken", width=50, height=10)
         self.team2Frame.grid(row=1, column=1)
 
-        
         self.quit_btn = Button(
             self.frame,
             text="DONE",
@@ -145,10 +144,10 @@ class GameMode:
             command=self.confirm_quit
             ).grid(row=2, column=0,columnspan=2)
 
-        
 
-    
-        
+
+
+
     def back_to_idle(self):
         self.master.destroy()
 
