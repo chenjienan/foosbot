@@ -1,10 +1,15 @@
-from picamera import PiCamera
-from time import sleep
+import io
+import picamera
+import config
 
-camera = PiCamera()
 
-camera.start_preview()
-camera.start_recording('/home/pi/git/foosbot/videos/video1.mp4')
-sleep(5)
-camera.stop_recording()
-camera.stop_preview()
+camera = picamera.PiCamera(framerate=34)
+stream = picamera.PiCameraCircularIO(camera, seconds=10)
+camera.start_recording(stream, format='h264')
+try:
+    while True:
+        # Keep recording for 5 seconds and only then write the stream to disk
+        camera.wait_recording(1)
+        stream.copy_to(config.video_path)
+finally:
+    camera.stop_recording()
