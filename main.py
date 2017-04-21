@@ -8,6 +8,7 @@ import camera
 import shutil
 import config
 import subprocess
+import time
 
 
 class IdleMode:
@@ -16,7 +17,7 @@ class IdleMode:
         self.master = master
         self.frame = Frame(self.master)
         self.prompt = StringVar()
-        
+
         self.btn_1 = Button(
             self.frame,
             text="1",
@@ -25,7 +26,7 @@ class IdleMode:
             width=2,
             command=self.need_1_player
         )
-        
+
         self.btn_2 = Button(
             self.frame,
             text="2",
@@ -34,7 +35,7 @@ class IdleMode:
             width=2,
             command=self.need_2_players
         )
-        
+
         self.btn_3 = Button(
             self.frame,
             text="3",
@@ -43,7 +44,7 @@ class IdleMode:
             width=2,
             command=self.need_3_players
         )
-        
+
         self.done_btn = Button(
             self.frame,
             text="CANCEL",
@@ -55,12 +56,12 @@ class IdleMode:
             height=20,
             width=16,
             font=(None, 10))
-        
+
         self.start_btn = Button(
             self.frame,
             text="START",
             bg="green",
-            
+
             fg="white",
             activeforeground="white",
             activebackground="green",
@@ -82,7 +83,7 @@ class IdleMode:
                                height=5,
                                width=50,
                                font=(None, 20))
-        
+
         self.bottom_label = Label(self.master,
                                   height=2,
                                   width=50,
@@ -92,7 +93,7 @@ class IdleMode:
         self.top_label.pack()
         self.bottom_label.pack()
         self.frame.pack()
-        
+
 
     def go_to_game(self):
         self.prompt.set("")
@@ -104,15 +105,15 @@ class IdleMode:
     def need_1_player(self):
         self.prompt.set("Last Request: 1 player")
         slack_api.send_message("1", "players_needed")
-        
+
     def need_2_players(self):
         self.prompt.set("Last Request: 2 players")
         slack_api.send_message("2", "players_needed")
-        
+
     def need_3_players(self):
         self.prompt.set("Last Request: 3 players")
         slack_api.send_message("3", "players_needed")
-        
+
     def clear_game(self):
         self.prompt.set("")
         slack_api.send_message(":soccer: Nobody's coming? Alright, cancelling game request :crying_cat_face:")
@@ -128,12 +129,12 @@ class GameMode:
         self.team1Score.set(0)
         self.team1Color = StringVar()
         self.team1Color.set("medium blue")
-        
+
         self.team2Score = IntVar()
         self.team2Score.set(0)
         self.team2Color = StringVar()
         self.team2Color.set("darkorange1")
-        
+        self.timestamp = time.time()
 
         self.quit_btn1 = Button(
             self.frame,
@@ -153,7 +154,7 @@ class GameMode:
             height=2,
             bg=self.team1Color.get())
         self.team1Label.grid(row=0, column=0,columnspan=2)
-        
+
         self.team1_addPnt_btn = Button(
             self.team1Frame,
             width=2,
@@ -172,7 +173,7 @@ class GameMode:
             height=1,
             bg=self.team1Color.get())
         self.team1Label.grid(row=1, column=1,rowspan=2)
-        
+
         self.team1_removePnt_btn = Button(
             self.team1Frame,
             width=2,
@@ -187,11 +188,11 @@ class GameMode:
         self.team1Frame.grid(row=1, column=0)
 
 
-        
+
         self.team2Frame = Frame(
             self.frame, borderwidth=2, relief="sunken"
             , width=49, height=10,bg=self.team2Color.get())
-        
+
         self.team2Label = Label(
             self.team2Frame,
             text="Team 2",
@@ -261,7 +262,9 @@ class GameMode:
         slack_api.send_message(
             ":soccer: *Current Game Update* \n Team 1 - "
             + str(self.team1Score.get()) + " VS Team 2 - "
-            + str(self.team2Score.get()))
+            + str(self.team2Score.get()),
+            "message",
+            self.timestamp)
 
     def back_to_idle(self):
         self.master.destroy()
@@ -276,9 +279,7 @@ class GameMode:
         shutil.copyfile(config.video_path, config.replay_video_path)
         #self.instantReplay = subprocess.Popen(['omxplayer', config.replay_video_path])
         #self.instantReplay.wait()
-        
 
-            
 def main():
     root = Tk()
     app = IdleMode(root)
