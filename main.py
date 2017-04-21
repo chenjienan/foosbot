@@ -119,73 +119,140 @@ class GameMode:
         self.master = master
         self.frame = Frame(self.master)
         self.frame.grid(row=0, column=0)
+        self.team1Score = IntVar()
+        self.team1Score.set(0)
+        self.team1Color = StringVar()
+        self.team1Color.set("medium blue")
+        
+        self.team2Score = IntVar()
+        self.team2Score.set(0)
+        self.team2Color = StringVar()
+        self.team2Color.set("darkorange1")
+       
 
         self.quit_btn1 = Button(
             self.frame,
-            width=100, height=8,
-            text="Instant Replay",
+            width=32, height=2,
+            font=(None, 29),
+            text="Instant Replay (not available yet)",
+            bg="purple"
             ).grid(row=0, column=0,columnspan=2)
 
         self.team1Frame = Frame(self.frame, borderwidth=2, relief="sunken"
-                                , width=50, height=10)
-        self.team1Label = Label(self.team1Frame,
-                                text="Team 1",
-                                width=50, height=2)
+                                , width=49, height=10,bg=self.team1Color.get())
+        self.team1Label = Label(
+            self.team1Frame,
+            text="Team 1",
+            width=49,
+            height=2,
+            bg=self.team1Color.get())
         self.team1Label.grid(row=0, column=0,columnspan=2)
+        
         self.team1_addPnt_btn = Button(
             self.team1Frame,
-            width=23, height=11,
+            width=2,
+            height=1,
             text="+",
+            font=(None, 82),
+            command=self.team1_addPoint,
+            bg=self.team1Color.get()
             ).grid(row=1, column=0)
 
-        self.team1Label = Label(self.team1Frame,
-                                text="#",
-                                width=23, height=2)
+        self.team1Label = Label(
+            self.team1Frame,
+            textvariable=self.team1Score,
+            font=(None, 80),
+            width=2,
+            height=1,
+            bg=self.team1Color.get())
         self.team1Label.grid(row=1, column=1,rowspan=2)
         
         self.team1_removePnt_btn = Button(
             self.team1Frame,
-            width=23, height=6,
+            width=2,
+            height=1,
             text="-",
+            font=(None, 82),
+            command=self.team1_removePoint,
+            bg=self.team1Color.get()
             ).grid(row=2, column=0)
 
 
         self.team1Frame.grid(row=1, column=0)
+
+
         
-        self.team2Frame = Frame(self.frame, borderwidth=2, relief="sunken"
-                                , width=50, height=10)
-        self.team2Label = Label(self.team2Frame,
-                                text="Team 2",
-                                width=50, height=2)
+        self.team2Frame = Frame(
+            self.frame, borderwidth=2, relief="sunken"
+            , width=49, height=10,bg=self.team2Color.get())
+        
+        self.team2Label = Label(
+            self.team2Frame,
+            text="Team 2",
+            width=49,
+            height=2,
+            bg=self.team2Color.get())
         self.team2Label.grid(row=0, column=0,columnspan=2)
-        self.team2Label = Label(self.team2Frame,
-                                text="#2",
-                                width=23, height=2)
+        self.team2Label = Label(
+            self.team2Frame,
+            textvariable=self.team2Score,
+            font=(None, 80),
+            width=2,
+            height=1,
+            bg=self.team2Color.get())
         self.team2Label.grid(row=1, column=0,rowspan=2)
 
         self.team2_addPnt_btn = Button(
             self.team2Frame,
-            width=23, height=11,
+            width=2,
+            height=1,
             text="+",
+            font=(None, 82),
+            command=self.team2_addPoint,
+            bg=self.team2Color.get()
             ).grid(row=1, column=1)
 
         self.team2_removePnt_btn = Button(
             self.team2Frame,
-           width=23, height=6,
+            width=2,
+            height=1,
             text="-",
+            font=(None, 82),
+            command=self.team2_removePoint,
+            bg=self.team2Color.get()
             ).grid(row=2, column=1)
         self.team2Frame.grid(row=1, column=1)
 
         self.quit_btn = Button(
             self.frame,
             text="DONE",
-            width=100, height=3,
-            command=self.confirm_quit
+            width=35, height=1,
+            font=(None, 27),
+            command=self.confirm_quit,
+            bg="green"
             ).grid(row=2, column=0,columnspan=2)
 
+    def team1_addPoint(self):
+        self.team1Score.set(self.team1Score.get()+1)
+        self.reportScore()
 
+    def team1_removePoint(self):
+        self.team1Score.set(self.team1Score.get()-1)
+        self.reportScore()
 
+    def team2_addPoint(self):
+        self.team2Score.set(self.team2Score.get()+1)
+        self.reportScore()
 
+    def team2_removePoint(self):
+        self.team2Score.set(self.team2Score.get()-1)
+        self.reportScore()
+
+    def reportScore(self):
+        slack_api.send_message(
+            ":soccer: *Current Game Update* \n Team 1 - "
+            + str(self.team1Score.get()) + " VS Team 2 - "
+            + str(self.team2Score.get()))
 
     def back_to_idle(self):
         self.master.destroy()
