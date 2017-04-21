@@ -140,7 +140,7 @@ class GameMode:
             self.frame,
             width=32, height=2,
             font=(None, 29),
-            text="Instant Replay (not available yet)",
+            text="Instant Replay",
             bg="purple",
             command=self.create_instant_replay
             ).grid(row=0, column=0,columnspan=2)
@@ -272,13 +272,13 @@ class GameMode:
     def confirm_quit(self):
         result = tkMessageBox.askyesno("Confirmation", "Do you want to end your game?", icon='warning', parent=self.master)
         if result:
+            camera.stop_recording()
             self.back_to_idle()
             slack_api.send_message(":soccer: *Game finished!*")
 
     def create_instant_replay(self):
         shutil.copyfile(config.video_path, config.replay_video_path)
-        #self.instantReplay = subprocess.Popen(['omxplayer', config.replay_video_path])
-        #self.instantReplay.wait()
+        self.instantReplay = subprocess.Popen(['omxplayer', '--win', '0 0 800 480', '--fps', '5', config.replay_video_path])
 
 def main():
     root = Tk()
