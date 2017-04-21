@@ -3,6 +3,11 @@
 from Tkinter import *
 import tkMessageBox
 import slack_api
+import picamera
+import camera
+import shutil
+import config
+import subprocess
 
 
 class IdleMode:
@@ -128,14 +133,15 @@ class GameMode:
         self.team2Score.set(0)
         self.team2Color = StringVar()
         self.team2Color.set("darkorange1")
-       
+        
 
         self.quit_btn1 = Button(
             self.frame,
             width=32, height=2,
             font=(None, 29),
             text="Instant Replay (not available yet)",
-            bg="purple"
+            bg="purple",
+            command=self.create_instant_replay
             ).grid(row=0, column=0,columnspan=2)
 
         self.team1Frame = Frame(self.frame, borderwidth=2, relief="sunken"
@@ -232,6 +238,9 @@ class GameMode:
             bg="green"
             ).grid(row=2, column=0,columnspan=2)
 
+        camera.start_recording()
+        
+
     def team1_addPoint(self):
         self.team1Score.set(self.team1Score.get()+1)
         self.reportScore()
@@ -262,6 +271,12 @@ class GameMode:
         if result:
             self.back_to_idle()
             slack_api.send_message(":soccer: *Game finished!*")
+
+    def create_instant_replay(self):
+        shutil.copyfile(config.video_path, config.replay_video_path)
+        #self.instantReplay = subprocess.Popen(['omxplayer', config.replay_video_path])
+        #self.instantReplay.wait()
+        
 
             
 def main():
