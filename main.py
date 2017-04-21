@@ -117,21 +117,38 @@ class GameMode:
 
     def __init__(self, master):
         self.master = master
-        self.frame = Frame(self.master)
-        self.quit_btn = Button(self.frame, text="DONE", height=20, width=20, command=self.confirm_quit)
-    
-        self.label = Label(self.master,
-                           bg="red",
-                           fg="white",
-                           text="We are in the Game!",
-                           height=5,
-                           width=50,
-                           font=(None, 20))
-        
-        self.label.pack()
-        self.quit_btn.pack()
-        self.frame.pack()
+        self.frame = Frame(self.master, borderwidth=5, relief="sunken")
+        self.frame.grid(row=0, column=0)
 
+        self.quit_btn = Button(
+            self.frame,
+            width=100, height=8,
+            text="Instant Replay",
+            ).grid(row=0, column=0,columnspan=2)
+
+        self.team1Frame = Frame(self.frame, borderwidth=5, relief="sunken", width=50, height=10)
+        self.team1Label = Label(self.team1Frame,
+                                text="Team 1",
+                                width=50, height=2)
+
+        
+        self.team1Frame.grid(row=1, column=0)
+        
+        self.team2Frame = Frame(self.frame, borderwidth=5, relief="sunken", width=50, height=10)
+        self.team2Frame.grid(row=1, column=1)
+
+        
+        self.quit_btn = Button(
+            self.frame,
+            text="DONE",
+            width=100, height=3,
+            command=self.confirm_quit
+            ).grid(row=2, column=0,columnspan=2)
+
+        
+
+    
+        
     def back_to_idle(self):
         self.master.destroy()
 
