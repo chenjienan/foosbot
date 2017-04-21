@@ -3,8 +3,8 @@ import picamera
 import config
 
 
-camera = picamera.PiCamera(framerate=34)
-stream = picamera.PiCameraCircularIO(camera, seconds=10)
+camera = picamera.PiCamera(framerate=config.framerate)
+stream = picamera.PiCameraCircularIO(camera, seconds=15)
 camera.start_recording(stream, format='h264')
 try:
     while True:
