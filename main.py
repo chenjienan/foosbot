@@ -11,7 +11,7 @@ class IdleMode:
         self.master = master
         self.frame = Frame(self.master)
         self.prompt = StringVar()
-
+        
         self.btn_1 = Button(
             self.frame,
             text="1",
@@ -20,7 +20,7 @@ class IdleMode:
             width=2,
             command=self.need_1_player
         )
-
+        
         self.btn_2 = Button(
             self.frame,
             text="2",
@@ -29,7 +29,7 @@ class IdleMode:
             width=2,
             command=self.need_2_players
         )
-
+        
         self.btn_3 = Button(
             self.frame,
             text="3",
@@ -38,7 +38,7 @@ class IdleMode:
             width=2,
             command=self.need_3_players
         )
-
+        
         self.done_btn = Button(
             self.frame,
             text="CANCEL",
@@ -50,12 +50,12 @@ class IdleMode:
             height=20,
             width=16,
             font=(None, 10))
-
+        
         self.start_btn = Button(
             self.frame,
             text="START",
             bg="green",
-
+            
             fg="white",
             activeforeground="white",
             activebackground="green",
@@ -77,7 +77,7 @@ class IdleMode:
                                height=5,
                                width=50,
                                font=(None, 20))
-
+        
         self.bottom_label = Label(self.master,
                                   height=2,
                                   width=50,
@@ -87,7 +87,7 @@ class IdleMode:
         self.top_label.pack()
         self.bottom_label.pack()
         self.frame.pack()
-
+        
 
     def go_to_game(self):
         self.prompt.set("")
@@ -99,15 +99,15 @@ class IdleMode:
     def need_1_player(self):
         self.prompt.set("Last Request: 1 player")
         slack_api.send_message("1", "players_needed")
-
+        
     def need_2_players(self):
         self.prompt.set("Last Request: 2 players")
         slack_api.send_message("2", "players_needed")
-
+        
     def need_3_players(self):
         self.prompt.set("Last Request: 3 players")
-        slack_api.send_message("g ", "players_needed")
-
+        slack_api.send_message("3", "players_needed")
+        
     def clear_game(self):
         self.prompt.set("")
         slack_api.send_message(":soccer: Nobody's coming? Alright, cancelling game request :crying_cat_face:")
@@ -117,24 +117,63 @@ class GameMode:
 
     def __init__(self, master):
         self.master = master
-        self.frame = Frame(self.master, borderwidth=5, relief="sunken")
+        self.frame = Frame(self.master)
         self.frame.grid(row=0, column=0)
 
-        self.quit_btn = Button(
+        self.quit_btn1 = Button(
             self.frame,
             width=100, height=8,
             text="Instant Replay",
             ).grid(row=0, column=0,columnspan=2)
 
-        self.team1Frame = Frame(self.frame, borderwidth=5, relief="sunken", width=50, height=10)
+        self.team1Frame = Frame(self.frame, borderwidth=2, relief="sunken"
+                                , width=50, height=10)
         self.team1Label = Label(self.team1Frame,
                                 text="Team 1",
                                 width=50, height=2)
+        self.team1Label.grid(row=0, column=0,columnspan=2)
+        self.team1_addPnt_btn = Button(
+            self.team1Frame,
+            width=23, height=11,
+            text="+",
+            ).grid(row=1, column=0)
+
+        self.team1Label = Label(self.team1Frame,
+                                text="#",
+                                width=23, height=2)
+        self.team1Label.grid(row=1, column=1,rowspan=2)
+        
+        self.team1_removePnt_btn = Button(
+            self.team1Frame,
+            width=23, height=6,
+            text="-",
+            ).grid(row=2, column=0)
 
 
         self.team1Frame.grid(row=1, column=0)
+        
+        self.team2Frame = Frame(self.frame, borderwidth=2, relief="sunken"
+                                , width=50, height=10)
+        self.team2Label = Label(self.team2Frame,
+                                text="Team 2",
+                                width=50, height=2)
+        self.team2Label.grid(row=0, column=0,columnspan=2)
+        self.team2Label = Label(self.team2Frame,
+                                text="#2",
+                                width=23, height=2)
+        self.team2Label.grid(row=1, column=0,rowspan=2)
 
-        self.team2Frame = Frame(self.frame, borderwidth=5, relief="sunken", width=50, height=10)
+        self.team2_addPnt_btn = Button(
+            self.team2Frame,
+            width=23, height=11,
+            text="+",
+            ).grid(row=1, column=1)
+
+        self.team2_removePnt_btn = Button(
+            self.team2Frame,
+           width=23, height=6,
+            text="-",
+            ).grid(row=2, column=1)
         self.team2Frame.grid(row=1, column=1)
 
         self.quit_btn = Button(
@@ -155,9 +194,9 @@ class GameMode:
         result = tkMessageBox.askyesno("Confirmation", "Do you want to end your game?", icon='warning', parent=self.master)
         if result:
             self.back_to_idle()
-            slack_api.send_message("Game finished!")
+            slack_api.send_message(":soccer: *Game finished!*")
 
-
+            
 def main():
     root = Tk()
     app = IdleMode(root)
